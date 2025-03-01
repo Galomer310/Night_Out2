@@ -1,250 +1,241 @@
-/* Global Reset */
+/* Global Reset: Remove default margin and padding; set border sizing and font */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-  }
-  
-  /* Body Styling */
-  body {
-    display: flex;
-    justify-content: start;
-    min-height: 100vh;
-    padding-left: 10px;
-    background-color: #f1f8ff;
-    color: #333;
-    font-size: 16px;
-    line-height: 1.5;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
 
+/* Body Styling: Set background color, text color, font size, line height and layout */
+body {
+  display: flex;
+  justify-content: start;       /* Align items to start horizontally */
+  min-height: 100vh;            /* Minimum height equals viewport height */
+  padding-left: 10px;           /* Padding from the left edge */
+  background-color: #f1f8ff;    /* Light background color */
+  color: #333;                /* Dark text color */
+  font-size: 16px;            /* Base font size */
+  line-height: 1.5;           /* Readable line height */
+}
+
+/* Heading Styling for h2 elements */
+h2 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 700;
+  color: #ff4d6d;
+  text-transform: uppercase;
+}
+
+/* Container: Centered card with a maximum width and padding */
+.container {
+  max-width: 850px;             /* Maximum width for larger screens */
+  width: 100%;                  /* Full width by default */
+  padding: 40px;                /* Internal spacing */
+  background-color: #fff;       /* White background for the card */
+  border-radius: 15px;          /* Rounded corners */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  display: flex;
+  flex-direction: column;       /* Stack children vertically */
+  align-items: center;          /* Center children horizontally */
+  box-sizing: border-box;
+  margin: 0 auto;               /* Center the container in the page */
+}
+
+/* Input Field Labels */
+label {
+  font-size: 1.2rem;
+  color: #555;
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+/* Styling for number input fields */
+input[type="number"] {
+  width: 100%;                  /* Take full width of the container */
+  max-width: 80px;              /* Do not exceed 80px width */
+  padding: 12px 15px;
+  font-size: 1.1rem;
+  border: 2px solid #ff6b81;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  background-color: #fff5f7;
+  color: #333;
+  transition: 0.3s ease;        /* Smooth transition for focus state */
+}
+
+/* Focus state for number input fields */
+input[type="number"]:focus {
+  border-color: #ff4d6d;
+  background-color: #fff;
+  outline: none;                /* Remove default outline */
+}
+
+/* Button Styles: Appearance and interactive transitions */
+button {
+  padding: 12px 25px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 50px;
+  background-color: #ff4d6d;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;    /* Smooth transition for hover and active states */
+  margin: 10px;
+}
+
+/* Button hover state: Change background and add a slight upward movement */
+button:hover {
+  background-color: #ff3366;
+  transform: translateY(-2px);
+}
+
+/* Button active state: Slight downward movement */
+button:active {
+  background-color: #ff1f4d;
+  transform: translateY(2px);
+}
+
+/* Item Cards: Styling for each item block */
+div.item {
+  margin: 15px 0;
+  padding: 18px;
+  background-color: #ffebee;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: 0.3s ease;
+}
+
+/* Hover state for item cards */
+div.item:hover {
+  background-color: #ffe0e6;
+  transform: scale(1.02);
+}
+
+/* Heading styling inside item cards */
+div.item h3 {
+  font-size: 1.3rem;
+  color: #ff4d6d;
+  font-weight: 600;
+}
+
+/* Paragraph styling inside item cards */
+div.item p {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Button styling inside item cards */
+div.item button {
+  background-color: #ff1f4d;
+  font-size: 1rem;
+  padding: 10px 18px;
+  border-radius: 10px;
+}
+
+/* Hover state for buttons inside item cards */
+div.item button:hover {
+  background-color: #ff3366;
+}
+
+/* Total Section: Shows the calculated total */
+div.total {
+  font-size: 1.6rem;
+  font-weight: 700;
+  background-color: #ff6b81;
+  padding: 15px;
+  border-radius: 12px;
+  color: white;
+  margin-top: 30px;
+  text-align: center;
+}
+
+/* Input and Button Group Layout: Vertical stack for related controls */
+div.input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 350px;
+  margin-bottom: 30px;
+}
+
+/* Spacing between each element inside the input group */
+div.input-group > * {
+  margin-bottom: 18px;
+}
+
+/* Additional spacing for labels inside input groups */
+div.input-group label {
+  margin-bottom: 8px;
+}
+
+/* Buttons Container: Horizontally align buttons with gaps */
+div.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* Fun Animation for buttons on hover */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
   }
-  
-  /* Heading */
-  h2 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-    text-align: center;
-    font-weight: 700;
-    color: #ff4d6d;
-    text-transform: uppercase;
+  50% {
+    transform: translateY(-5px);
   }
-  
-  /* Container */
+}
+
+/* Apply bounce animation on button hover */
+button:hover {
+  animation: bounce 0.4s ease-in-out;
+}
+
+/* Media Query: For screens up to 1024px (tablets and small desktops) */
+@media (max-width: 1024px) {
+  body {
+    padding: 20px;  /* Add padding around body */
+  }
   .container {
-    max-width: 850px;
-    width: 100%;
-    padding: 40px;
-    background-color: #fff;
-    border-radius: 15px;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    box-sizing: border-box;
-    margin: 0 auto; /* Center the container */
+    padding: 30px;  /* Reduce container padding */
+    margin: 0 20px; /* Side margin for better spacing */
   }
-  
-  /* Input Fields */
-  label {
-    font-size: 1.2rem;
-    color: #555;
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
+  h2 {
+    font-size: 2rem;  /* Slightly smaller headings */
   }
-  
-  input[type="number"] {
-    width: 100%;
-    max-width: 80px;
-    padding: 12px 15px;
-    font-size: 1.1rem;
-    border: 2px solid #ff6b81;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    background-color: #fff5f7;
-    color: #333;
-    transition: 0.3s ease;
-  }
-  
-  input[type="number"]:focus {
-    border-color: #ff4d6d;
-    background-color: #fff;
-    outline: none;
-  }
-  
-  /* Button Styles */
   button {
-    padding: 12px 25px;
-    font-size: 1.2rem;
-    border: none;
-    border-radius: 50px;
-    background-color: #ff4d6d;
-    color: #fff;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin: 10px;
+    font-size: 1.1rem;       /* Slightly smaller button font */
+    padding: 12px 20px;      /* Adjust button padding */
   }
-  
-  button:hover {
-    background-color: #ff3366;
-    transform: translateY(-2px);
-  }
-  
-  button:active {
-    background-color: #ff1f4d;
-    transform: translateY(2px);
-  }
-  
-  /* Item Cards */
   div.item {
-    margin: 15px 0;
-    padding: 18px;
-    background-color: #ffebee;
-    border-radius: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    max-width: 500px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    transition: 0.3s ease;
+    max-width: 100%;         /* Allow item cards to use full width */
   }
-  
-  div.item:hover {
-    background-color: #ffe0e6;
-    transform: scale(1.02);
-  }
-  
-  div.item h3 {
-    font-size: 1.3rem;
-    color: #ff4d6d;
-    font-weight: 600;
-  }
-  
-  div.item p {
-    font-size: 1rem;
-    color: #555;
-  }
-  
-  div.item button {
-    background-color: #ff1f4d;
-    font-size: 1rem;
-    padding: 10px 18px;
-    border-radius: 10px;
-  }
-  
-  div.item button:hover {
-    background-color: #ff3366;
-  }
-  
-  /* Total Section */
   div.total {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #333;
-    margin-top: 30px;
-    text-align: center;
-    background-color: #ff6b81;
-    padding: 15px;
-    border-radius: 12px;
-    color: white;
+    font-size: 1.4rem;       /* Adjust total section font size */
   }
-  
-  /* Inputs & Buttons Flex Layout */
-  div.input-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 350px;
-    margin-bottom: 30px;
+}
+
+/* Media Query: For very small screens up to 480px */
+@media (max-width: 480px) {
+  h2 {
+    font-size: 1.5rem;       /* Further reduce heading size */
   }
-  
-  div.input-group > * {
-    margin-bottom: 18px;
+  button {
+    font-size: 1rem;         /* Smaller button text */
+    padding: 10px 15px;      /* Adjust button padding */
   }
-  
-  div.input-group label {
-    margin-bottom: 8px;
+  div.item h3 {
+    font-size: 1rem;         /* Adjust item card heading size */
   }
-  
-  /* Buttons Container */
-  div.button-container {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
+  div.total {
+    font-size: 1rem;         /* Adjust total section font size */
   }
-  
-  /* Fun Animation on Button */
-  @keyframes bounce {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-5px);
-    }
-  }
-  
-  button:hover {
-    animation: bounce 0.4s ease-in-out;
-  }
-  
-  /* Media Query for responsiveness */
-  @media (max-width: 768px) {
-    body {
-      padding: 20px; /* Add padding for mobile */
-    }
-  
-    .container {
-      padding: 20px;
-      margin: 0 20px; /* Add side margin for better spacing on mobile */
-    }
-  
-    div.input-group {
-      width: 100%;
-      max-width: 100%;
-    }
-  
-    button {
-      font-size: 1rem;
-      padding: 12px 20px;
-    }
-  
-    h2 {
-      font-size: 2rem;
-    }
-  
-    h3 {
-      font-size: 1.4rem;
-    }
-  
-    div.item {
-      width: 100%;
-      max-width: 100%;
-    }
-  
-    div.total {
-      font-size: 1.4rem;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    /* Adjust font sizes even more for very small screens */
-    h2 {
-      font-size: 1rem;
-    }
-  
-    button {
-      font-size: 1rem;
-      padding: 10px 15px;
-    }
-  
-    div.item h3 {
-      font-size: 1rem;
-    }
-  
-    div.total {
-      font-size: 1rem;
-    }
-  }
-  
+}
