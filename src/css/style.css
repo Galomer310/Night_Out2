@@ -8,15 +8,15 @@
   
   /* Body Styling */
   body {
+    display: flex;
+    justify-content: start;
+    min-height: 100vh;
+    padding-left: 10px;
     background-color: #f1f8ff;
     color: #333;
     font-size: 16px;
     line-height: 1.5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 0;
+
   }
   
   /* Heading */
