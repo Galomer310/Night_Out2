@@ -231,7 +231,7 @@
   @media (max-width: 480px) {
     /* Adjust font sizes even more for very small screens */
     h2 {
-      font-size: 1.8rem;
+      font-size: 1rem;
     }
   
     button {
@@ -240,11 +240,11 @@
     }
   
     div.item h3 {
-      font-size: 1.2rem;
+      font-size: 1rem;
     }
   
     div.total {
-      font-size: 1.2rem;
+      font-size: 1rem;
     }
   }
   
