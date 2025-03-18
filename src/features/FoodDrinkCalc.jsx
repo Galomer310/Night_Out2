@@ -1,24 +1,24 @@
-// Import necessary hooks from react-redux and React
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-// Import all the action creators from our foodDrink slice
 import {
   addItem,
   subtractItem,
+  deleteItem,
+  clearItems,
   setBeerPrice,
   setShotPrice,
   setFoodPrice,
   setTipAmount,
   setParticipants,
-  deleteItem,
-  clearItems,
 } from "./state/slice";
-import { useState } from "react";
 
-// Define the FoodDrinkCalc functional component
+// We'll store an array of "bill" objects in sessionStorage under this key
+const BILLS_STORAGE_KEY = "bills";
+
 function FoodDrinkCalc() {
-  // Get the dispatch function to dispatch actions to Redux store
   const dispatch = useDispatch();
-  // Get state values from the Redux store using useSelector
+
+  // Redux state
   const items = useSelector((state) => state.foodDrink.items);
   const beerPrice = useSelector((state) => state.foodDrink.beerPrice);
   const shotPrice = useSelector((state) => state.foodDrink.shotPrice);
@@ -26,133 +26,224 @@ function FoodDrinkCalc() {
   const tipAmount = useSelector((state) => state.foodDrink.tipAmount);
   const participants = useSelector((state) => state.foodDrink.participants);
 
-  // Local state to track button and header color (used for dynamic styling)
-  const [buttonColor, setButtonColor] = useState("#20b2aa"); // Default button color
-  const [headerColor, setHeaderColor] = useState("#20b2aa");   // Default header color
+  // Local component states
+  const [userName, setUserName] = useState("");
 
-  // Define a cycle of colors to be used (not used now, but kept for possible future enhancement)
-  const colorCycle = ["#ff6347", "#4682b4", "#800080", "#808080"]; // red, blue, purple, gray
-  const [colorIndex, setColorIndex] = useState(0); // Track the current color index
+  // "bills" will hold a list of all finalized bills (with name, total, etc.)
+  const [bills, setBills] = useState([]);
 
-  // Function to dispatch an action to add an item (beer, shot, or food)
+  // On component mount, load any existing bills from sessionStorage
+  useEffect(() => {
+    const storedBills = sessionStorage.getItem(BILLS_STORAGE_KEY);
+    if (storedBills) {
+      setBills(JSON.parse(storedBills));
+    }
+  }, []);
+
+  // Save bills to sessionStorage whenever "bills" changes
+  useEffect(() => {
+    sessionStorage.setItem(BILLS_STORAGE_KEY, JSON.stringify(bills));
+  }, [bills]);
+
+  // Calculate the total for the current bill
+  const calculateTotal = () => {
+    const totalItems = items.reduce(
+      (sum, item) => sum + item.quantity * item.price,
+      0
+    );
+    const foodPortion = foodPrice / participants;
+    const totalBeforeTip = totalItems + foodPortion;
+    const tipInDollars = (tipAmount / 100) * totalBeforeTip;
+    return totalBeforeTip + tipInDollars;
+  };
+
+  // Add an item (beer, shot, food)
   const handleAddItem = (id, type) => {
     dispatch(addItem({ id, type }));
   };
 
-  // Function to dispatch an action to subtract an item quantity
+  // Subtract an item quantity
   const handleSubtractItem = (id, type) => {
     dispatch(subtractItem({ id, type }));
   };
 
-  // Function to dispatch an action to delete an item completely
+  // Remove an item
   const handleDeleteItem = (id) => {
     dispatch(deleteItem({ id }));
   };
 
-  // Handler to update the beer price from user input
-  const handleBeerPriceChange = (event) => {
-    dispatch(setBeerPrice(parseFloat(event.target.value) || 0));
+  // onChange handlers
+  const handleBeerPriceChange = (e) => {
+    dispatch(setBeerPrice(parseFloat(e.target.value) || 0));
+  };
+  const handleShotPriceChange = (e) => {
+    dispatch(setShotPrice(parseFloat(e.target.value) || 0));
+  };
+  const handleFoodPriceChange = (e) => {
+    dispatch(setFoodPrice(parseFloat(e.target.value) || 0));
+  };
+  const handleTipAmountChange = (e) => {
+    dispatch(setTipAmount(parseInt(e.target.value) || 0));
+  };
+  const handleParticipantsChange = (e) => {
+    dispatch(setParticipants(parseInt(e.target.value) || 1));
   };
 
-  // Handler to update the shot price from user input
-  const handleShotPriceChange = (event) => {
-    dispatch(setShotPrice(parseFloat(event.target.value) || 0));
+  // "Reset" button to clear the current form without saving a new bill
+  const handleReset = () => {
+    dispatch(clearItems());
+    dispatch(setBeerPrice(0));
+    dispatch(setShotPrice(0));
+    dispatch(setFoodPrice(0));
+    dispatch(setTipAmount(0));
+    dispatch(setParticipants(1));
+    setUserName("");
   };
 
-  // Handler to update the food price from user input
-  const handleFoodPriceChange = (event) => {
-    dispatch(setFoodPrice(parseFloat(event.target.value) || 0));
+  // "Next Calc" button:
+  // 1) finalize the current bill
+  // 2) store it in bills array
+  // 3) reset the form
+  const handleNextCalc = () => {
+    const newBill = {
+      userName: userName.trim() || "Anonymous",
+      total: calculateTotal().toFixed(2),
+      date: new Date().toLocaleString(),
+      items: items.map((i) => ({ ...i })),
+    };
+    setBills((prev) => [...prev, newBill]);
+    handleReset();
   };
 
-  // Handler to update the tip percentage from user input
-  const handleTipAmountChange = (event) => {
-    dispatch(setTipAmount(parseFloat(event.target.value) || 0));
+  // NEW: Delete all bills from sessionStorage & state
+  const handleDeleteAllBills = () => {
+    sessionStorage.removeItem(BILLS_STORAGE_KEY);
+    setBills([]);
   };
 
-  // Handler to update the number of participants from user input
-  const handleParticipantsChange = (event) => {
-    dispatch(setParticipants(parseInt(event.target.value) || 1));
-  };
-
-  // Function to calculate the total amount based on items, food price, tip and participants
-  const calculateTotal = () => {
-    // Sum up the total for all items (price multiplied by quantity)
-    const totalItems = items.reduce((sum, item) => sum + item.quantity * item.price, 0);
-    // Calculate the share of food price per participant
-    const foodPortion = foodPrice / participants;
-    // Calculate the total before tip
-    const totalAmountBeforeTip = totalItems + foodPortion;
-    // Calculate the tip amount in dollars
-    const totalTip = (tipAmount / 100) * totalAmountBeforeTip;
-    // Return the final total amount including tip
-    return totalAmountBeforeTip + totalTip;
-  };
-
-  // Find the beer and shot items to display current quantity (if any)
+  // For item display in UI
   const beerItem = items.find((item) => item.name === "beer");
   const shotItem = items.find((item) => item.name === "shot");
 
-  // Modified Next Calc handler: simply reloads the page to "restart" the calculation
-  const handleNextCalc = () => {
-    // Reload the entire page which resets all states
-    window.location.reload();
-  };
-
-  // Determine the current dynamic colors (if you want to add color cycling later)
-  const currentButtonColor = colorCycle[colorIndex];
-  const currentHeaderColor = colorCycle[colorIndex];
-
   return (
-    <div>
-      {/* Header with dynamic color */}
-      <h2 style={{ color: currentHeaderColor }}>Food and Drink Calculator</h2>
+    <div className="container">
+      {/* HERO / SUMMARY SECTION */}
+      <div style={{ width: "100%", marginBottom: "30px" }}>
+        <h2>Previous Bills</h2>
+        {bills.length === 0 ? (
+          <p>No bills saved yet.</p>
+        ) : (
+          <div style={{ backgroundColor: "#fafafa", padding: "15px" }}>
+            {bills.map((bill, index) => (
+              <div
+                key={index}
+                style={{
+                  border: "1px solid #ccc",
+                  marginBottom: "10px",
+                  padding: "10px",
+                  borderRadius: "5px",
+                }}
+              >
+                <h4 style={{ color: "#ff4d6d" }}>
+                  {bill.userName} &nbsp; (Total: ${bill.total})
+                </h4>
+                <small>{bill.date}</small>
+                <ul>
+                  {bill.items.map((it, iIndex) => (
+                    <li key={iIndex}>
+                      {it.quantity} x {it.name} @ ${it.price}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+            {/* NEW: Button to delete all bills */}
+            <button onClick={handleDeleteAllBills}>Delete All Data</button>
+          </div>
+        )}
+      </div>
 
-      {/* Beer Input Section */}
-      <div>
-        <label>Beer Price: </label>
+      {/* CURRENT CALC SECTION */}
+      <h2>Food and Drink Calculator</h2>
+
+      {/* User Name */}
+      <div className="input-group">
+        <label htmlFor="userName">Your Name:</label>
+        <input
+          id="userName"
+          type="text"
+          placeholder="Enter your name"
+          value={userName}
+          onChange={(e) => setUserName(e.target.value)}
+        />
+      </div>
+
+      {/* Beer Inputs */}
+      <div className="input-group">
+        <label>Beer Price:</label>
         <input
           type="number"
           value={beerPrice}
           onChange={handleBeerPriceChange}
-          placeholder="Enter price for one beer"
+          min="0"
+          step="0.01"
+          placeholder="Price for one beer"
         />
-        <button onClick={() => handleAddItem("beer", "beer")}>
-          Add One Beer {beerItem ? `(${beerItem.quantity})` : "(0)"}
-        </button>
-        <button onClick={() => handleDeleteItem("beer")}>Delete Beer</button>
+        <div>
+          <button onClick={() => handleAddItem("beer", "beer")}>
+            Add Beer {beerItem ? `(${beerItem.quantity})` : ""}
+          </button>
+          {beerItem && beerItem.quantity > 0 && (
+            <button onClick={() => handleSubtractItem("beer", "beer")}>
+              Subtract
+            </button>
+          )}
+          <button onClick={() => handleDeleteItem("beer")}>Delete Beer</button>
+        </div>
       </div>
 
-      {/* Shot Input Section */}
-      <div>
-        <label>Shot Price: </label>
+      {/* Shot Inputs */}
+      <div className="input-group">
+        <label>Shot Price:</label>
         <input
           type="number"
           value={shotPrice}
           onChange={handleShotPriceChange}
-          placeholder="Enter price for one shot"
+          min="0"
+          step="0.01"
+          placeholder="Price for one shot"
         />
-        <button onClick={() => handleAddItem("shot", "shot")}>
-          Add One Shot {shotItem ? `(${shotItem.quantity})` : "(0)"}
-        </button>
-        <button onClick={() => handleDeleteItem("shot")}>Delete Shot</button>
+        <div>
+          <button onClick={() => handleAddItem("shot", "shot")}>
+            Add Shot {shotItem ? `(${shotItem.quantity})` : ""}
+          </button>
+          {shotItem && shotItem.quantity > 0 && (
+            <button onClick={() => handleSubtractItem("shot", "shot")}>
+              Subtract
+            </button>
+          )}
+          <button onClick={() => handleDeleteItem("shot")}>Delete Shot</button>
+        </div>
       </div>
 
-      {/* Food Input Section */}
-      <div>
-        <label>Food Price: </label>
+      {/* Food Inputs */}
+      <div className="input-group">
+        <label>Food Price (total):</label>
         <input
           type="number"
           value={foodPrice}
           onChange={handleFoodPriceChange}
+          min="0"
+          step="0.01"
           placeholder="Enter total food price"
         />
         <button onClick={() => handleAddItem("food", "food")}>Add Food</button>
         <button onClick={() => handleDeleteItem("food")}>Delete Food</button>
       </div>
 
-      {/* Participants Input: Used for splitting the food cost */}
-      <div>
-        <label>Number of Participants (for Food): </label>
+      {/* Participants */}
+      <div className="input-group">
+        <label>Number of Participants (for Food):</label>
         <input
           type="number"
           value={participants}
@@ -161,38 +252,31 @@ function FoodDrinkCalc() {
         />
       </div>
 
-      {/* Tip Input Section */}
-      <div>
-        <label>Tip Amount (percentage): </label>
+      {/* Tip */}
+      <div className="input-group">
+        <label>Tip Amount (%):</label>
         <input
           type="number"
           value={tipAmount}
           onChange={handleTipAmountChange}
+          min="0"
+          step="0.01"
           placeholder="Enter tip percentage"
         />
-        <button onClick={() => handleDeleteItem("tip")}>Delete Tip</button>
       </div>
 
-      {/* Total Calculation Display */}
-      <div>
-        <h3>Total: ${calculateTotal()}</h3>
+      {/* Display Current Bill Total */}
+      <div className="total">
+        Current Bill Total: ${calculateTotal().toFixed(2)}
       </div>
 
-      {/* Next Calc button: When clicked, page reloads to restart the calculation */}
-      <button
-        style={{
-          position: "fixed",
-          bottom: "20px",
-          right: "20px",
-          backgroundColor: currentButtonColor,
-        }}
-        onClick={handleNextCalc}
-      >
-        Next Calc
-      </button>
+      {/* Button Row */}
+      <div className="button-container">
+        <button onClick={handleNextCalc}>Next Calc</button>
+        <button onClick={handleReset}>Reset</button>
+      </div>
     </div>
   );
 }
 
-// Export the component as default
 export default FoodDrinkCalc;
