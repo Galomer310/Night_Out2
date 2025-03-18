@@ -115,7 +115,7 @@ function FoodDrinkCalc() {
     handleReset();
   };
 
-  // NEW: Delete all bills from sessionStorage & state
+  // Delete all bills from sessionStorage & state
   const handleDeleteAllBills = () => {
     sessionStorage.removeItem(BILLS_STORAGE_KEY);
     setBills([]);
@@ -128,23 +128,15 @@ function FoodDrinkCalc() {
   return (
     <div className="container">
       {/* HERO / SUMMARY SECTION */}
-      <div style={{ width: "100%", marginBottom: "30px" }}>
+      <div className="hero-summary">
         <h2>Previous Bills</h2>
         {bills.length === 0 ? (
           <p>No bills saved yet.</p>
         ) : (
-          <div style={{ backgroundColor: "#fafafa", padding: "15px" }}>
+          <div className="bills-container">
             {bills.map((bill, index) => (
-              <div
-                key={index}
-                style={{
-                  border: "1px solid #ccc",
-                  marginBottom: "10px",
-                  padding: "10px",
-                  borderRadius: "5px",
-                }}
-              >
-                <h4 style={{ color: "#ff4d6d" }}>
+              <div key={index} className="bill-block">
+                <h4 className="bill-heading">
                   {bill.userName} &nbsp; (Total: ${bill.total})
                 </h4>
                 <small>{bill.date}</small>
@@ -157,7 +149,6 @@ function FoodDrinkCalc() {
                 </ul>
               </div>
             ))}
-            {/* NEW: Button to delete all bills */}
             <button onClick={handleDeleteAllBills}>Delete All Data</button>
           </div>
         )}
@@ -189,7 +180,7 @@ function FoodDrinkCalc() {
           step="0.01"
           placeholder="Price for one beer"
         />
-        <div>
+        <div className="button-group">
           <button onClick={() => handleAddItem("beer", "beer")}>
             Add Beer {beerItem ? `(${beerItem.quantity})` : ""}
           </button>
@@ -213,7 +204,7 @@ function FoodDrinkCalc() {
           step="0.01"
           placeholder="Price for one shot"
         />
-        <div>
+        <div className="button-group">
           <button onClick={() => handleAddItem("shot", "shot")}>
             Add Shot {shotItem ? `(${shotItem.quantity})` : ""}
           </button>
@@ -237,8 +228,12 @@ function FoodDrinkCalc() {
           step="0.01"
           placeholder="Enter total food price"
         />
-        <button onClick={() => handleAddItem("food", "food")}>Add Food</button>
-        <button onClick={() => handleDeleteItem("food")}>Delete Food</button>
+        <div className="button-group">
+          <button onClick={() => handleAddItem("food", "food")}>
+            Add Food
+          </button>
+          <button onClick={() => handleDeleteItem("food")}>Delete Food</button>
+        </div>
       </div>
 
       {/* Participants */}
